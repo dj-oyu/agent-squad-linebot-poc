@@ -4,6 +4,7 @@ import { aiRouter } from "./tools/ai-router";
 
 dotenv.config();
 
+import type { Request, Response, NextFunction } from "express";
 export const app = express();
 app.use(express.json());
 
@@ -25,11 +26,28 @@ app.post("/ai", async (req, res) => {
 
 // クイズ履歴取得API
 import { getQuizHistories } from "./services/quiz-history";
-app.get("/quiz-history", async (req, res) => {
+// 簡易認証ミドルウェア
+// 簡易認証ミドルウェア
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  // TODO: 本番はJWT検証やユーザー認可を実装
+  next();
+}
+
+// 型: Promise<void>を明示
+app.get("/quiz-history", requireAuth, async (req: Request, res: Response): Promise<void> => {
   const userId = req.query.userId as string;
-  if (!userId) return res.status(400).json({ error: "userId required" });
+  if (!userId) {
+    res.status(400).json({ error: "userId required" });
+    return;
+  }
   const histories = await getQuizHistories(userId, 20);
   res.json(histories);
+  return;
 });
 
 // 今後: /tools/openai, /tools/gemini, /tools/grok, /tools/groq など個別エンドポイントも追加

@@ -23,9 +23,16 @@ vi.mock("@prisma/client", () => {
 });
 
 describe("GET /quiz-history", () => {
-  it("ユーザーID指定で履歴が取得できる", async () => {
+  it("認証トークンがない場合は401", async () => {
+    await request(app)
+      .get("/quiz-history?userId=user-1")
+      .expect(401);
+  });
+
+  it("ユーザーID指定＋認証トークンで履歴が取得できる", async () => {
     const res = await request(app)
       .get("/quiz-history?userId=user-1")
+      .set("Authorization", "Bearer testtoken")
       .expect(200);
     expect(res.body[0].answer).toBe("S3");
     expect(res.body[0].userId).toBe("user-1");
