@@ -2,10 +2,6 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 dotenv.config();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 /**
  * OpenAI GPT-4.1 コード生成用
  * @param input { prompt: string }
@@ -14,6 +10,10 @@ export async function callOpenAIGPT4(input: { prompt: string }) {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not set");
   }
+  // インスタンス生成を関数内に移動
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
   const completion = await openai.chat.completions.create({
     model: "gpt-4-1106-preview",
     messages: [
