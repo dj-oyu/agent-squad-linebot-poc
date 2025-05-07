@@ -115,6 +115,7 @@ app.post("/webhook", async (req, res) => {
         } else {
           // 通常のテキストはgroq（Llama3 Scout）で会話応答
           try {
+            console.log("groq呼び出し: ", text);
             const groqRes = await fetch(process.env.AGENT_SQUAD_API_URL + "/ai", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -136,8 +137,9 @@ app.post("/webhook", async (req, res) => {
               { type: "text", text: replyText },
             ]);
           } catch (err) {
+            console.error("groq会話API呼び出しエラー:", err);
             await client.replyMessage(event.replyToken, [
-              { type: "text", text: "会話API連携でエラーが発生しました" },
+              { type: "text", text: "会話API連携でエラーが発生しました: " + (err instanceof Error ? err.message : String(err)) },
             ]);
           }
         }
