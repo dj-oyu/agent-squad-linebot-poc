@@ -11,16 +11,19 @@
     "test": "vitest"
   },
   "dependencies": {
-    "openai": "^4.30.0",
+    "@prisma/client": "^5.13.0",
     "dotenv": "^16.3.1",
-    "prisma": "^5.13.0",
-    "@prisma/client": "^5.13.0"
+    "express": "^5.1.0",
+    "openai": "^4.30.0",
+    "prisma": "^5.13.0"
   },
   "devDependencies": {
-    "typescript": "^5.4.5",
-    "ts-node": "^10.9.2",
     "@types/node": "^20.11.30",
+    "@types/supertest": "^6.0.3",
     "eslint": "^8.56.0",
+    "supertest": "^7.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
     "vitest": "^1.5.0"
   }
 }

@@ -4,7 +4,7 @@ import { aiRouter } from "./tools/ai-router";
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 app.use(express.json());
 
 // ヘルスチェック
@@ -23,9 +23,20 @@ app.post("/ai", async (req, res) => {
   }
 });
 
+// クイズ履歴取得API
+import { getQuizHistories } from "./services/quiz-history";
+app.get("/quiz-history", async (req, res) => {
+  const userId = req.query.userId as string;
+  if (!userId) return res.status(400).json({ error: "userId required" });
+  const histories = await getQuizHistories(userId, 20);
+  res.json(histories);
+});
+
 // 今後: /tools/openai, /tools/gemini, /tools/grok, /tools/groq など個別エンドポイントも追加
 
-const port = process.env.PORT || 8000;
-app.listen(port, () => {
-  console.log(`agent squad MCP server running on port ${port}`);
-});
+if (require.main === module) {
+  const port = process.env.PORT || 8000;
+  app.listen(port, () => {
+    console.log(`agent squad MCP server running on port ${port}`);
+  });
+}
