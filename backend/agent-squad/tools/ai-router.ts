@@ -12,17 +12,19 @@ type Purpose =
   | "quiz_review"
   | "default";
 
+import { callOpenAIGPT4 } from "./openai-tool";
+
+import { callGeminiPro } from "./gemini-tool";
+
 export async function aiRouter(purpose: Purpose, input: any): Promise<any> {
   switch (purpose) {
     case "code_generation":
       // OpenAI GPT-4.1
-      // return await callOpenAIGPT4(input);
-      return { result: "OpenAI GPT-4.1 (ダミー応答)" };
+      return await callOpenAIGPT4(input);
     case "quiz_generation":
     case "document_summary":
       // Gemini Pro 2.5
-      // return await callGeminiPro(input);
-      return { result: "Gemini Pro 2.5 (ダミー応答)" };
+      return await callGeminiPro(input);
     case "quiz_judgement":
     case "quiz_review":
       // Groq (Llama3 Scout)
