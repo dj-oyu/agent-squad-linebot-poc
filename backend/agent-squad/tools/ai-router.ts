@@ -13,8 +13,9 @@ type Purpose =
   | "default";
 
 import { callOpenAIGPT4 } from "./openai-tool";
-
 import { callGeminiPro } from "./gemini-tool";
+import { callGrok } from "./grok-tool";
+import { callGroqLlama3 } from "./groq-tool";
 
 export async function aiRouter(purpose: Purpose, input: any): Promise<any> {
   switch (purpose) {
@@ -28,11 +29,9 @@ export async function aiRouter(purpose: Purpose, input: any): Promise<any> {
     case "quiz_judgement":
     case "quiz_review":
       // Groq (Llama3 Scout)
-      // return await callGroqLlama3(input);
-      return { result: "Groq Llama3 Scout (ダミー応答)" };
+      return await callGroqLlama3(input);
     default:
       // Grok（無料枠）
-      // return await callGrok(input);
-      return { result: "Grok (ダミー応答)" };
+      return await callGrok(input);
   }
 }
