@@ -18,9 +18,9 @@ export async function callGroqLlama3(input: { prompt: string }) {
       Authorization: `Bearer ${GROQ_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "llama3-70b-8192",
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
       messages: [
-        { role: "system", content: "You are an expert quiz judge and reviewer." },
+        { role: "system", content: "あなたは親しみやすいLINE公式アカウントBotです。日常会話をしつつ、AWSやIT資格のクイズ出題・判定、資料要約、履歴管理などが得意です。ユーザーが困っていたら「資料URLを送ってくれたらクイズを自動生成できます」「回答: ...と送ると判定します」など、できることを自然に案内してください。無理に営業せず、雑談も歓迎です。" },
         { role: "user", content: input.prompt },
       ],
       max_tokens: 1024,

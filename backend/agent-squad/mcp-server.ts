@@ -64,6 +64,29 @@ app.get("/quiz-history", requireAuth, async (req: Request, res: Response): Promi
   return;
 });
 
+// 管理者API: admin claim（userId === "admin-user"）のみ全件取得
+app.get("/quiz-history-admin", async (req: Request, res: Response): Promise<void> => {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const idToken = auth.replace("Bearer ", "");
+  try {
+    const userIdFromToken = await verifyLineIdToken(idToken);
+    if (userIdFromToken !== "admin-user") {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+    const histories = await getQuizHistories("", 1000); // 全件取得
+    res.json(histories);
+    return;
+  } catch (e) {
+    res.status(401).json({ error: "Invalid token" });
+    return;
+  }
+});
+
 // 今後: /tools/openai, /tools/gemini, /tools/grok, /tools/groq など個別エンドポイントも追加
 
 if (require.main === module) {

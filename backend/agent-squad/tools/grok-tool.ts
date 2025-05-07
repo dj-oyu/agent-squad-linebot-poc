@@ -18,7 +18,7 @@ export async function callGrok(input: { prompt: string }) {
       Authorization: `Bearer ${GROK_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "grok-1",
+      model: "grok-3-beta",
       messages: [
         { role: "system", content: "You are a helpful assistant." },
         { role: "user", content: input.prompt },

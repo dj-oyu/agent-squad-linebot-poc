@@ -110,12 +110,35 @@ app.post("/webhook", async (req, res) => {
                   // ignore
                 }
               }
+        } else {
+          // 通常のテキストはgroq（Llama3 Scout）で会話応答
+          try {
+            const groqRes = await fetch(process.env.AGENT_SQUAD_API_URL + "/ai", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                purpose: "default",
+                input: { prompt: text, userId: event.source.userId },
+              }),
+            });
+            const data = await groqRes.json();
+            let replyText = "";
+            if (data.result && data.result.choices && data.result.choices[0]?.message?.content) {
+              replyText = data.result.choices[0].message.content;
+            } else if (typeof data.result === "string") {
+              replyText = data.result;
             } else {
-              // 通常のテキストはオウム返し
-              await client.replyMessage(event.replyToken, [
-                { type: "text", text: `受信: ${text}` },
-              ]);
+              replyText = JSON.stringify(data.result);
             }
+            await client.replyMessage(event.replyToken, [
+              { type: "text", text: replyText },
+            ]);
+          } catch (err) {
+            await client.replyMessage(event.replyToken, [
+              { type: "text", text: "会話API連携でエラーが発生しました" },
+            ]);
+          }
+        }
           }
         } catch (err) {
           // 予期せぬエラーもログ出力
