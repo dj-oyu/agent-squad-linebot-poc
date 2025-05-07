@@ -41,8 +41,18 @@ app.post("/webhook", async (req, res) => {
               }),
             });
             const data = await res.json();
+            // クイズ生成結果をLINEで出題（仮: テキストでそのまま表示）
+            let quizText = "クイズ生成結果:\n";
+            if (data.result && data.result.candidates && data.result.candidates[0]?.content?.parts) {
+              // Gemini APIのレスポンス例
+              quizText += data.result.candidates[0].content.parts.map((p: any) => p.text).join("\n");
+            } else if (typeof data.result === "string") {
+              quizText += data.result;
+            } else {
+              quizText += JSON.stringify(data.result);
+            }
             await client.replyMessage(event.replyToken, [
-              { type: "text", text: `クイズ生成結果: ${JSON.stringify(data.result)}` },
+              { type: "text", text: quizText },
             ]);
           } catch (err) {
             await client.replyMessage(event.replyToken, [
