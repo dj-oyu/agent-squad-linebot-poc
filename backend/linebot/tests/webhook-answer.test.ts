@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.test" });
 
 import request from "supertest";
-import { Client } from "@line/bot-sdk";
+import { Client, WebhookEvent } from "@line/bot-sdk";
 import { app, client } from "../webhook";
 
 // モック
@@ -11,7 +11,7 @@ vi.mock("@line/bot-sdk", async (importOriginal) => {
   const mod = await importOriginal();
   return {
     ...mod,
-    middleware: vi.fn(() => (req, res, next) => next()),
+    middleware: vi.fn(() => (req: any, res: any, next: any) => next()),
     Client: vi.fn().mockImplementation(() => ({
       replyMessage: vi.fn().mockResolvedValue(undefined),
     })),
@@ -39,12 +39,12 @@ describe("LINE Bot クイズ回答→判定→履歴記録フロー", () => {
     // ...
 
     // LINE Webhookイベント（回答メッセージ）
-    const event = {
+    const event: WebhookEvent = {
       type: "message",
       message: { type: "text", text: "回答: S3" },
       replyToken: "dummy-token",
       source: { userId: "user-1" },
-    };
+    } as WebhookEvent;
 
     // Webhookリクエスト
     await request(app)
