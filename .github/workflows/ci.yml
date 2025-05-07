@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop, feature/**, fix/**]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies (linebot)
+        run: cd backend/linebot && pnpm install
+
+      - name: Install dependencies (agent-squad)
+        run: cd backend/agent-squad && pnpm install
+
+      - name: Lint (linebot)
+        run: cd backend/linebot && pnpm run lint
+
+      - name: Lint (agent-squad)
+        run: cd backend/agent-squad && pnpm run lint
+
+      - name: Build (linebot)
+        run: cd backend/linebot && pnpm run build
+
+      - name: Build (agent-squad)
+        run: cd backend/agent-squad && pnpm run build
+
+      - name: Test (linebot)
+        run: cd backend/linebot && pnpm run test -- --coverage
+
+      - name: Test (agent-squad)
+        run: cd backend/agent-squad && pnpm run test -- --coverage
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            backend/linebot/coverage
+            backend/agent-squad/coverage

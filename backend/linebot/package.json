@@ -1,0 +1,26 @@
+{
+  "name": "linebot",
+  "version": "0.1.0",
+  "description": "LINE公式アカウント連携Webhook/APIサーバー (TypeScript)",
+  "main": "webhook.ts",
+  "scripts": {
+    "dev": "ts-node webhook.ts",
+    "start": "node dist/webhook.js",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@line/bot-sdk": "^7.5.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "ts-node": "^10.9.2",
+    "@types/node": "^20.11.30",
+    "@types/express": "^4.17.21",
+    "eslint": "^8.56.0",
+    "vitest": "^1.5.0"
+  }
+}

@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  lineId    String   @unique
+  createdAt DateTime @default(now())
+  quizHistories QuizHistory[]
+}
+
+model QuizHistory {
+  id         String   @id @default(uuid())
+  userId     String
+  quiz       String   // JSON文字列として保存
+  answer     String
+  result     String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model ApiUsageLog {
+  id         String   @id @default(uuid())
+  userId     String
+  aiType     String   // openai/gemini/grok/groq
+  purpose    String   // code_generation/quiz_generation/...
+  request    String   // JSON文字列として保存
+  response   String   // JSON文字列として保存
+  cost       Float?
+  createdAt  DateTime @default(now())
+}

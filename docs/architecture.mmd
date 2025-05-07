@@ -1,0 +1,44 @@
+# アーキテクチャ設計（Mermaid）
+
+```mermaid
+sequenceDiagram
+    participant User as LINEユーザー
+    participant LINE as LINE Messaging API
+    participant LB as Webhook/linebot (Express/TypeScript)
+    participant AG as agent squad (MCP/TypeScript)
+    participant AI as AI API (OpenAI/Gemini/Grok/Groq)
+    participant DB as DB (SQLite/Prisma)
+    participant LOG as API利用ログ
+
+    User->>LINE: チャット送信（資料URL/回答）
+    LINE->>LB: Webhookイベント通知
+    LB->>AG: APIリクエスト（資料連携/クイズ生成/回答）
+    AG->>AI: AI API呼び出し（用途分担）
+    AG->>DB: クイズ・成績保存
+    AG->>LOG: API利用ログ記録
+    AG->>LB: クイズ/解説/成績レスポンス
+    LB->>LINE: メッセージ返信
+    LINE->>User: クイズ出題・解説・成績表示
+```
+
+---
+
+## 各コンポーネントの役割
+
+- **LINEユーザー**: LINE公式アカウントとチャット、資料URL送信・クイズ回答
+- **LINE Messaging API**: Webhookイベントをlinebotに転送
+- **Webhook/linebot**: Express/TypeScript、Webhook受信・agent squad連携・LINE返信
+- **agent squad**: MCPサーバー、AI API用途分担・クイズ生成・判定・DB/ログ管理
+- **AI API**: OpenAI/Gemini/Grok/Groq、用途ごとに自動切替
+- **DB**: Prisma/SQLite（PoC）、DynamoDB等（本番）
+- **API利用ログ**: AI API利用状況・コストを記録
+
+---
+
+## AWS移行時のポイント
+
+- Webhook/linebot・agent squadはECS Fargate/App Runner/Lambdaで稼働
+- DBはDynamoDB/RDS等に切替
+- S3で資料ファイル管理も拡張可能
+- APIキー・エンドポイントはAWS Secrets Manager/SSMで管理
+- CloudWatchでログ・監査

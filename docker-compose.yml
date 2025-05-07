@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  linebot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev --prefix backend/linebot
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend/linebot:/app/backend/linebot
+      - ./backend/db:/app/backend/db
+    depends_on:
+      - agent-squad
+
+  agent-squad:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev --prefix backend/agent-squad
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend/agent-squad:/app/backend/agent-squad
+      - ./backend/db:/app/backend/db
+
+  # SQLite DBはファイル永続化のみ（PoC用）
+  db:
+    image: nouchka/sqlite3:latest
+    volumes:
+      - ./backend/db:/data
+    command: tail -f /dev/null

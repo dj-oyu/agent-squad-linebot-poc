@@ -1,0 +1,35 @@
+# .clinerules
+
+## short steps (直近ToDo)
+- backend/linebot ディレクトリ作成・Express+@line/bot-sdk雛形実装
+- backend/agent-squad ディレクトリ作成・MCPツール雛形実装
+- backend/db ディレクトリ作成・Prisma/SQLite初期化
+- Dockerfile, docker-compose.yml 雛形作成
+- docs/prd.md, docs/tech-stack.md, docs/architecture.mmd など設計資料作成
+- .github/workflows/ci.yml 雛形作成
+- テスト雛形（Vitest/Jest）作成
+
+## long steps (中長期ToDo)
+- LINE BotのWebhook署名検証・セキュリティ強化
+- agent squad MCPツールのAI用途分岐ロジック実装（ai-router.ts）
+- API利用ログDB記録・コスト可視化
+- AWS移行時のDB/ストレージ/環境変数切替
+- CI/CD自動化・ECR/ECS/App Runner/Lambda対応
+- ドキュメント・テスト・CI/CDの継続的最新化
+
+## insights (設計・実装上の注意点)
+- すべてTypeScriptで統一
+- AI API用途分担は ai-router.ts で一元管理
+- APIキー・エンドポイントは.envで厳格管理
+- 無料枠（Grok）優先、用途限定で課金API（OpenAI/Gemini/Groq）を利用
+- API利用ログは必ずDBに記録し、将来的なコスト可視化に備える
+- MCPツールは用途追加時も拡張容易な構造に
+- AWS移行時はDB/ストレージ/環境変数/CI/CDを本番用に切替
+- セキュリティ（署名検証、ファイルサイズ制限、認可）を徹底
+- ドキュメント・テスト・CI/CDを常に最新に保つ
+
+## AI用途分担
+- コード生成: OpenAI GPT-4.1
+- ドキュメント要約・クイズ生成: Gemini Pro 2.5
+- クイズ判定・講評: Groq (Llama3 Scout)
+- その他汎用応答: Grok
