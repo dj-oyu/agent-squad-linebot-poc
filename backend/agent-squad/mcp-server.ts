@@ -27,15 +27,29 @@ app.post("/ai", async (req, res) => {
 // クイズ履歴取得API
 import { getQuizHistories } from "./services/quiz-history";
 // 簡易認証ミドルウェア
-// 簡易認証ミドルウェア
-function requireAuth(req: Request, res: Response, next: NextFunction) {
+// LINE IDトークン認証ミドルウェア
+import { verifyLineIdToken } from "./services/line-jwt";
+async function requireAuth(req: Request, res: Response, next: NextFunction) {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith("Bearer ")) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
-  // TODO: 本番はJWT検証やユーザー認可を実装
-  next();
+  const idToken = auth.replace("Bearer ", "");
+  try {
+    const userIdFromToken = await verifyLineIdToken(idToken);
+    // userIdクエリと一致しなければ403
+    const userId = req.query.userId as string;
+    if (!userId || userId !== userIdFromToken) {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+    // req.userId = userIdFromToken; // 必要に応じて
+    next();
+  } catch (e) {
+    res.status(401).json({ error: "Invalid token" });
+    return;
+  }
 }
 
 // 型: Promise<void>を明示
