@@ -1,13 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-
 /**
  * Gemini Pro 2.5 ドキュメント要約・クイズ生成用
  * @param input { url: string, userId?: string }
  */
 export async function callGeminiPro(input: { url: string; userId?: string }) {
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
   if (!GEMINI_API_KEY) {
     throw new Error("GEMINI_API_KEY is not set");
   }

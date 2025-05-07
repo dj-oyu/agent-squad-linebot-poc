@@ -1,13 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
-
 /**
  * Groq (Llama3 Scout) クイズ判定・講評用
  * @param input { prompt: string }
  */
 export async function callGroqLlama3(input: { prompt: string }) {
+  const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
   if (!GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY is not set");
   }

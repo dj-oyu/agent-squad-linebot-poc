@@ -1,13 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const GROK_API_KEY = process.env.GROK_API_KEY || "";
-
 /**
  * Grok（無料枠）汎用応答用
  * @param input { prompt: string }
  */
 export async function callGrok(input: { prompt: string }) {
+  const GROK_API_KEY = process.env.GROK_API_KEY || "";
   if (!GROK_API_KEY) {
     throw new Error("GROK_API_KEY is not set");
   }
