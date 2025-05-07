@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 /**
  * Gemini Pro 2.5 ドキュメント要約・クイズ生成用

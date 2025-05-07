@@ -1,8 +1,10 @@
 import express from "express";
 import { middleware, Client, WebhookEvent } from "@line/bot-sdk";
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
+// プロジェクトルートの.envを参照
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN || "",
