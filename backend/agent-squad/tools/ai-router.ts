@@ -16,22 +16,55 @@ import { callOpenAIGPT4 } from "./openai-tool";
 import { callGeminiPro } from "./gemini-tool";
 import { callGrok } from "./grok-tool";
 import { callGroqLlama3 } from "./groq-tool";
+import { logApiUsage } from "../services/api-usage-log";
 
 export async function aiRouter(purpose: Purpose, input: any): Promise<any> {
   switch (purpose) {
     case "code_generation":
       // OpenAI GPT-4.1
-      return await callOpenAIGPT4(input);
+      const openaiRes = await callOpenAIGPT4(input);
+      await logApiUsage({
+        userId: input.userId || "unknown",
+        aiType: "openai",
+        purpose,
+        request: input,
+        response: openaiRes,
+      });
+      return openaiRes;
     case "quiz_generation":
     case "document_summary":
       // Gemini Pro 2.5
-      return await callGeminiPro(input);
+      const geminiRes = await callGeminiPro(input);
+      await logApiUsage({
+        userId: input.userId || "unknown",
+        aiType: "gemini",
+        purpose,
+        request: input,
+        response: geminiRes,
+      });
+      return geminiRes;
     case "quiz_judgement":
     case "quiz_review":
       // Groq (Llama3 Scout)
-      return await callGroqLlama3(input);
+      const groqRes = await callGroqLlama3(input);
+      await logApiUsage({
+        userId: input.userId || "unknown",
+        aiType: "groq",
+        purpose,
+        request: input,
+        response: groqRes,
+      });
+      return groqRes;
     default:
       // Grok（無料枠）
-      return await callGrok(input);
+      const grokRes = await callGrok(input);
+      await logApiUsage({
+        userId: input.userId || "unknown",
+        aiType: "grok",
+        purpose,
+        request: input,
+        response: grokRes,
+      });
+      return grokRes;
   }
 }
