@@ -74,18 +74,33 @@ app.post("/webhook", async (req, res) => {
                   }),
                 });
                 const data = await res.json();
-                let judgeText = "判定結果:\n";
-                if (data.result && data.result.judge) {
-                  judgeText += data.result.judge;
-                  if (data.result.review) judgeText += "\n" + data.result.review;
-                } else if (typeof data.result === "string") {
-                  judgeText += data.result;
-                } else {
-                  judgeText += JSON.stringify(data.result);
-                }
-                await client.replyMessage(event.replyToken, [
-                  { type: "text", text: judgeText },
-                ]);
+            let judgeText = "判定結果:\n";
+            if (data.result && data.result.judge) {
+              judgeText += data.result.judge;
+              if (data.result.review) judgeText += "\n" + data.result.review;
+            } else if (typeof data.result === "string") {
+              judgeText += data.result;
+            } else {
+              judgeText += JSON.stringify(data.result);
+            }
+            // クイズ履歴記録API呼び出し
+            try {
+              await fetch(process.env.AGENT_SQUAD_API_URL + "/quiz-history", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  userId: event.source.userId,
+                  quiz: {}, // TODO: 実際のクイズ内容を渡す
+                  answer: text,
+                  result: data.result.judge || "",
+                }),
+              });
+            } catch (e) {
+              // ignore
+            }
+            await client.replyMessage(event.replyToken, [
+              { type: "text", text: judgeText },
+            ]);
               } catch (err) {
                 try {
                   await client.replyMessage(event.replyToken, [

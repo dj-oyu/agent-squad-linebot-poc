@@ -28,15 +28,19 @@ describe("LINE Bot クイズ回答→判定→履歴記録フロー", () => {
 
   it("ユーザーの回答を受信し、agent squadで判定→LINE返信→履歴記録API呼び出し", async () => {
     // agent squad判定APIのモック
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        result: { judge: "正解", review: "Good!" },
-      }),
-    }) as any;
-
-    // クイズ履歴記録APIのモック（今後拡張）
-    // ...
+    globalThis.fetch = vi.fn()
+      // 1回目: 判定API
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          result: { judge: "正解", review: "Good!" },
+        }),
+      })
+      // 2回目: クイズ履歴記録API
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true }),
+      }) as any;
 
     // LINE Webhookイベント（回答メッセージ）
     const event: WebhookEvent = {
@@ -57,5 +61,7 @@ describe("LINE Bot クイズ回答→判定→履歴記録フロー", () => {
     expect(client.replyMessage).toHaveBeenCalledWith("dummy-token", [
       { type: "text", text: expect.stringContaining("正解") },
     ]);
+    // クイズ履歴記録APIが呼ばれていること
+    expect((fetch as any).mock.calls[1][0]).toContain("/quiz-history");
   });
 });
