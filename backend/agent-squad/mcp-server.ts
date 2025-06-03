@@ -25,7 +25,7 @@ app.post("/ai", async (req, res) => {
 });
 
 // クイズ履歴取得API
-import { getQuizHistories } from "./services/quiz-history";
+import { getQuizHistories, logQuizHistory } from "./services/quiz-history";
 // 簡易認証ミドルウェア
 // LINE IDトークン認証ミドルウェア
 import { verifyLineIdToken } from "./services/line-jwt";
@@ -62,6 +62,21 @@ app.get("/quiz-history", requireAuth, async (req: Request, res: Response): Promi
   const histories = await getQuizHistories(userId, 20);
   res.json(histories);
   return;
+});
+
+// クイズ履歴登録API（linebotから利用）
+app.post("/quiz-history", async (req: Request, res: Response): Promise<void> => {
+  const { userId, quiz, answer, result } = req.body;
+  if (!userId || !quiz) {
+    res.status(400).json({ error: "userId and quiz required" });
+    return;
+  }
+  try {
+    const history = await logQuizHistory({ userId, quiz, answer, result });
+    res.status(201).json(history);
+  } catch (e) {
+    res.status(500).json({ error: "Failed to log quiz history" });
+  }
 });
 
 // 管理者API: admin claim（userId === "admin-user"）のみ全件取得
