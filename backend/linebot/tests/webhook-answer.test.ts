@@ -10,7 +10,7 @@ import { app, client } from "../webhook";
 vi.mock("@line/bot-sdk", async (importOriginal) => {
   const mod = await importOriginal();
   return {
-    ...mod,
+    ...(mod as Record<string, any>),
     middleware: vi.fn(() => (req: any, res: any, next: any) => next()),
     Client: vi.fn().mockImplementation(() => ({
       replyMessage: vi.fn().mockResolvedValue(undefined),
