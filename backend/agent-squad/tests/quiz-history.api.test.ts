@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
 import request from "supertest";
-import { app } from "../mcp-server";
+let app: any;
 
 vi.mock("@prisma/client", () => {
   return {
@@ -19,6 +19,11 @@ vi.mock("@prisma/client", () => {
       },
     })),
   };
+});
+
+beforeAll(async () => {
+  const mod = await import("../mcp-server");
+  app = mod.app;
 });
 
 // LINE JWT検証モック

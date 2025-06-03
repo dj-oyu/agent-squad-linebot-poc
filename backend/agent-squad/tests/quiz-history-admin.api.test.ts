@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import request from "supertest";
 
 // Prismaのモック
@@ -16,10 +16,14 @@ vi.mock("@prisma/client", () => {
   };
 });
 
-// 管理者ID環境変数を設定してからアプリを読み込む
-process.env.ADMIN_LINE_USER_ID = "admin-user";
-// テスト対象アプリはモック定義後に読み込む
-const { app } = await import("../mcp-server");
+let app: any;
+
+beforeAll(async () => {
+  // 管理者ID環境変数を設定してからアプリを読み込む
+  process.env.ADMIN_LINE_USER_ID = "admin-user";
+  const mod = await import("../mcp-server");
+  app = mod.app;
+});
 
 // LINE JWT検証モック
 vi.mock("../services/line-jwt", () => ({
