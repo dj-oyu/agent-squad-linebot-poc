@@ -74,11 +74,12 @@ app.get("/quiz-history-admin", async (req: Request, res: Response): Promise<void
   const idToken = auth.replace("Bearer ", "");
   try {
     const userIdFromToken = await verifyLineIdToken(idToken);
-    if (userIdFromToken !== "admin-user") {
+    const adminId = process.env.ADMIN_LINE_USER_ID || "admin-user";
+    if (userIdFromToken !== adminId) {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
-    const histories = await getQuizHistories("", 1000); // 全件取得
+    const histories = await getQuizHistories(undefined, 1000); // 全件取得
     res.json(histories);
     return;
   } catch (e) {

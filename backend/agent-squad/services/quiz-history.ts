@@ -28,9 +28,9 @@ export async function logQuizHistory({
 /**
  * ユーザーごとのクイズ履歴を取得
  */
-export async function getQuizHistories(userId: string, limit = 20) {
+export async function getQuizHistories(userId?: string, limit = 20) {
   return prisma.quizHistory.findMany({
-    where: { userId },
+    where: userId ? { userId } : {},
     orderBy: { createdAt: "desc" },
     take: limit,
   });
