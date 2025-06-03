@@ -10,6 +10,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["*.ts", "tools/**/*.ts", "tests/**/*.ts"],
+  "include": ["*.ts", "tools/**/*.ts", "tests/**/*.ts", "types/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
