@@ -7,6 +7,7 @@
   ├─ architecture.mmd      # アーキテクチャ設計図（Mermaid）
   ├─ folder-structure.md   # 本ファイル（構成・役割まとめ）
   ├─ deploy.md             # デプロイ手順・AWS移行ポイント
+/cdk                     # AWS CDK stacks
 /backend
   /agent-squad             # agent squad MCPサーバー（AI用途分担・拡張）
     ├─ mcp-server.ts
@@ -50,6 +51,6 @@
 ## 今後の拡張ポイント
 
 - /frontend（管理画面・Web UI追加時）
-- /infra（AWS CDK/terraform等のIaC）
+- /cdk（AWS CDKスタック置き場）
 - /backend/agent-squad/tools（新AI API追加時に拡張）
 - /backend/db（DynamoDB/RDS等への移行）

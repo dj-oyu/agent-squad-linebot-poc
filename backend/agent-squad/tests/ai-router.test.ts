@@ -1,9 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import * as aiRouterModule from "../tools/ai-router";
 import * as openaiTool from "../tools/openai-tool";
 import * as geminiTool from "../tools/gemini-tool";
 import * as grokTool from "../tools/grok-tool";
 import * as groqTool from "../tools/groq-tool";
+
+// Prismaを利用するAPI利用ログサービスをモック化
+vi.mock("../services/api-usage-log", () => ({
+  logApiUsage: vi.fn(),
+}));
+
+// モック設定後に対象モジュールを読み込む
+import * as aiRouterModule from "../tools/ai-router";
 
 describe("aiRouter", () => {
   beforeEach(() => {

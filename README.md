@@ -27,6 +27,7 @@
 
 ```
 /docs                # 要件・設計・技術資料
+/cdk                 # AWS CDK stacks
 /backend
   /agent-squad       # agent squad MCPサーバー
   /linebot           # LINE Bot Webhook/API

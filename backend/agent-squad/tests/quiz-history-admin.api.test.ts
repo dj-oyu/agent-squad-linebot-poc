@@ -1,19 +1,28 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import request from "supertest";
-import { app } from "../mcp-server";
 
 // Prismaのモック
+const findManyMock = vi.fn().mockResolvedValue([
+  { id: "1", userId: "user-1", answer: "S3", result: "正解", createdAt: new Date() },
+  { id: "2", userId: "user-2", answer: "EC2", result: "不正解", createdAt: new Date() },
+]);
 vi.mock("@prisma/client", () => {
   return {
     PrismaClient: vi.fn().mockImplementation(() => ({
       quizHistory: {
-        findMany: vi.fn().mockResolvedValue([
-          { id: "1", userId: "user-1", answer: "S3", result: "正解", createdAt: new Date() },
-          { id: "2", userId: "user-2", answer: "EC2", result: "不正解", createdAt: new Date() },
-        ]),
+        findMany: findManyMock,
       },
     })),
   };
+});
+
+let app: any;
+
+beforeAll(async () => {
+  // 管理者ID環境変数を設定してからアプリを読み込む
+  process.env.ADMIN_LINE_USER_ID = "admin-user";
+  const mod = await import("../mcp-server");
+  app = mod.app;
 });
 
 // LINE JWT検証モック
@@ -40,5 +49,10 @@ describe("GET /quiz-history-admin", () => {
     expect(res.body.length).toBe(2);
     expect(res.body[0].userId).toBe("user-1");
     expect(res.body[1].userId).toBe("user-2");
+    expect(findManyMock).toHaveBeenCalledWith({
+      where: {},
+      orderBy: { createdAt: "desc" },
+      take: 1000,
+    });
   });
 });

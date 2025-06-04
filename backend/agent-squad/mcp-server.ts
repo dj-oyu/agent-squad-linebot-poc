@@ -25,7 +25,7 @@ app.post("/ai", async (req, res) => {
 });
 
 // クイズ履歴取得API
-import { getQuizHistories } from "./services/quiz-history";
+import { getQuizHistories, logQuizHistory } from "./services/quiz-history";
 // 簡易認証ミドルウェア
 // LINE IDトークン認証ミドルウェア
 import { verifyLineIdToken } from "./services/line-jwt";
@@ -64,6 +64,21 @@ app.get("/quiz-history", requireAuth, async (req: Request, res: Response): Promi
   return;
 });
 
+// クイズ履歴登録API（linebotから利用）
+app.post("/quiz-history", async (req: Request, res: Response): Promise<void> => {
+  const { userId, quiz, answer, result } = req.body;
+  if (!userId || !quiz) {
+    res.status(400).json({ error: "userId and quiz required" });
+    return;
+  }
+  try {
+    const history = await logQuizHistory({ userId, quiz, answer, result });
+    res.status(201).json(history);
+  } catch (e) {
+    res.status(500).json({ error: "Failed to log quiz history" });
+  }
+});
+
 // 管理者API: admin claim（userId === "admin-user"）のみ全件取得
 app.get("/quiz-history-admin", async (req: Request, res: Response): Promise<void> => {
   const auth = req.headers.authorization;
@@ -74,11 +89,12 @@ app.get("/quiz-history-admin", async (req: Request, res: Response): Promise<void
   const idToken = auth.replace("Bearer ", "");
   try {
     const userIdFromToken = await verifyLineIdToken(idToken);
-    if (userIdFromToken !== "admin-user") {
+    const adminId = process.env.ADMIN_LINE_USER_ID || "admin-user";
+    if (userIdFromToken !== adminId) {
       res.status(403).json({ error: "Forbidden" });
       return;
     }
-    const histories = await getQuizHistories("", 1000); // 全件取得
+    const histories = await getQuizHistories(undefined, 1000); // 全件取得
     res.json(histories);
     return;
   } catch (e) {
