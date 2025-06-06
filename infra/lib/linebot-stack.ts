@@ -12,7 +12,9 @@ export class LinebotStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const vpc = new ec2.Vpc(this, 'Vpc', { maxAzs: 2 });
+    const vpc = new ec2.Vpc(this, 'Vpc', { 
+      maxAzs: Math.min(2, this.availabilityZones.length)
+    });
 
     const cluster = new ecs.Cluster(this, 'Cluster', { vpc, defaultCloudMapNamespace: { name: 'agent-squad' } });
 
