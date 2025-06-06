@@ -14,6 +14,11 @@ const config = {
 export const client = new Client(config);
 export const app = express();
 
+// ヘルスチェック用エンドポイント（署名検証なし）
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.use(middleware(config));
 app.use(express.json());
 

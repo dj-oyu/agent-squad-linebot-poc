@@ -112,6 +112,13 @@ export class LinebotStack extends cdk.Stack {
       taskDefinition: linebotTask,
       assignPublicIp: true,
       publicLoadBalancer: true,
+      healthCheckGracePeriod: cdk.Duration.seconds(60),
+    });
+
+    // ヘルスチェックパスを /health に変更
+    linebotService.targetGroup.configureHealthCheck({
+      path: '/health',
+      healthyHttpCodes: '200',
     });
 
     const agentTask = new ecs.FargateTaskDefinition(this, 'AgentTask', { taskRole });
