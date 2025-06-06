@@ -32,6 +32,42 @@ export class LinebotStack extends cdk.Stack {
 
     const dbUrl = `postgresql://${db.secret!.secretValueFromJson('username')}:${db.secret!.secretValueFromJson('password')}@${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}/postgres`;
 
+    // Create secrets for application
+    const lineChannelSecret = new secretsmanager.Secret(this, 'LineChannelSecret', {
+      secretName: 'LINE_CHANNEL_SECRET',
+      description: 'LINE Bot Channel Secret'
+    });
+
+    const lineChannelAccessToken = new secretsmanager.Secret(this, 'LineChannelAccessToken', {
+      secretName: 'LINE_CHANNEL_ACCESS_TOKEN',
+      description: 'LINE Bot Channel Access Token'
+    });
+
+    const openaiApiKey = new secretsmanager.Secret(this, 'OpenaiApiKey', {
+      secretName: 'OPENAI_API_KEY',
+      description: 'OpenAI API Key'
+    });
+
+    const geminiApiKey = new secretsmanager.Secret(this, 'GeminiApiKey', {
+      secretName: 'GEMINI_API_KEY',
+      description: 'Gemini API Key'
+    });
+
+    const grokApiKey = new secretsmanager.Secret(this, 'GrokApiKey', {
+      secretName: 'GROK_API_KEY',
+      description: 'Grok API Key'
+    });
+
+    const groqApiKey = new secretsmanager.Secret(this, 'GroqApiKey', {
+      secretName: 'GROQ_API_KEY',
+      description: 'Groq API Key'
+    });
+
+    const adminLineUserId = new secretsmanager.Secret(this, 'AdminLineUserId', {
+      secretName: 'ADMIN_LINE_USER_ID',
+      description: 'Admin LINE User ID'
+    });
+
     const image = new ecrAssets.DockerImageAsset(this, 'ServiceImage', {
       directory: '../',
       file: 'Dockerfile',
@@ -60,13 +96,13 @@ export class LinebotStack extends cdk.Stack {
         DATABASE_URL: dbUrl,
       },
       secrets: {
-        LINE_CHANNEL_SECRET: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'LineSecret', 'LINE_CHANNEL_SECRET')),
-        LINE_CHANNEL_ACCESS_TOKEN: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'LineToken', 'LINE_CHANNEL_ACCESS_TOKEN')),
-        OPENAI_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'OpenAI', 'OPENAI_API_KEY')),
-        GEMINI_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'Gemini', 'GEMINI_API_KEY')),
-        GROK_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'Grok', 'GROK_API_KEY')),
-        GROQ_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'Groq', 'GROQ_API_KEY')),
-        ADMIN_LINE_USER_ID: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'AdminUser', 'ADMIN_LINE_USER_ID')),
+        LINE_CHANNEL_SECRET: ecs.Secret.fromSecretsManager(lineChannelSecret),
+        LINE_CHANNEL_ACCESS_TOKEN: ecs.Secret.fromSecretsManager(lineChannelAccessToken),
+        OPENAI_API_KEY: ecs.Secret.fromSecretsManager(openaiApiKey),
+        GEMINI_API_KEY: ecs.Secret.fromSecretsManager(geminiApiKey),
+        GROK_API_KEY: ecs.Secret.fromSecretsManager(grokApiKey),
+        GROQ_API_KEY: ecs.Secret.fromSecretsManager(groqApiKey),
+        ADMIN_LINE_USER_ID: ecs.Secret.fromSecretsManager(adminLineUserId),
       },
     });
 
@@ -84,10 +120,10 @@ export class LinebotStack extends cdk.Stack {
       portMappings: [{ containerPort: 8000 }],
       environment: { DATABASE_URL: dbUrl },
       secrets: {
-        OPENAI_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'OpenAI2', 'OPENAI_API_KEY')),
-        GEMINI_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'Gemini2', 'GEMINI_API_KEY')),
-        GROK_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'Grok2', 'GROK_API_KEY')),
-        GROQ_API_KEY: ecs.Secret.fromSecretsManager(secretsmanager.Secret.fromSecretNameV2(this, 'Groq2', 'GROQ_API_KEY')),
+        OPENAI_API_KEY: ecs.Secret.fromSecretsManager(openaiApiKey),
+        GEMINI_API_KEY: ecs.Secret.fromSecretsManager(geminiApiKey),
+        GROK_API_KEY: ecs.Secret.fromSecretsManager(grokApiKey),
+        GROQ_API_KEY: ecs.Secret.fromSecretsManager(groqApiKey),
       },
     });
 
