@@ -29,6 +29,15 @@ export class LinebotStack extends cdk.Stack {
     const image = new ecrAssets.DockerImageAsset(this, 'ServiceImage', {
       directory: '../',
       file: 'Dockerfile',
+      exclude: [
+        'infra/cdk.out',
+        'infra/node_modules',
+        '**/.git',
+        '**/node_modules',
+        '**/dist',
+        '**/coverage',
+        '**/*.log'
+      ],
     });
 
     const taskRole = new iam.Role(this, 'TaskRole', {
