@@ -13,7 +13,7 @@ export class LinebotStack extends cdk.Stack {
     super(scope, id, props);
 
     const vpc = new ec2.Vpc(this, 'Vpc', { 
-      maxAzs: 1,
+      availabilityZones: ['ap-northeast-1a', 'ap-northeast-1c'],
       natGateways: 1
     });
 
@@ -21,10 +21,13 @@ export class LinebotStack extends cdk.Stack {
 
     const db = new rds.DatabaseInstance(this, 'Database', {
       engine: rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_16_3 }),
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),
       vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
       credentials: rds.Credentials.fromGeneratedSecret('postgres'),
       publiclyAccessible: false,
+      allocatedStorage: 20,
+      deletionProtection: false,
     });
 
     const dbUrl = `postgresql://${db.secret!.secretValueFromJson('username')}:${db.secret!.secretValueFromJson('password')}@${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}/postgres`;
