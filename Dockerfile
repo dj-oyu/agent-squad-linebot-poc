@@ -15,5 +15,11 @@ RUN cd backend/agent-squad && npm install
 # ソースコードコピー
 COPY backend ./backend
 
+# Prismaクライアント生成
+RUN cd backend/agent-squad && npx prisma generate --schema=../db/schema.prisma
+
+# スタートアップスクリプトに実行権限を付与
+RUN chmod +x backend/scripts/start-agent-squad.sh backend/scripts/start-linebot.sh
+
 # デフォルトはlinebot起動（docker-composeでoverride可）
-CMD ["npm", "run", "dev", "--prefix", "backend/linebot"]
+CMD ["backend/scripts/start-linebot.sh"]

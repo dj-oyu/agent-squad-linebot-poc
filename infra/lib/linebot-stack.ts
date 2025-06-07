@@ -91,7 +91,7 @@ export class LinebotStack extends cdk.Stack {
       image: ecs.ContainerImage.fromDockerImageAsset(image),
       logging: ecs.LogDriver.awsLogs({ streamPrefix: 'linebot' }),
       portMappings: [{ containerPort: 3000 }],
-      command: ['npm', 'run', 'dev', '--prefix', 'backend/linebot'],
+      command: ['backend/scripts/start-linebot.sh'],
       environment: {
         AGENT_SQUAD_API_URL: `http://agent-squad.agent-squad:8000`,
         DATABASE_URL: dbUrl,
@@ -126,7 +126,7 @@ export class LinebotStack extends cdk.Stack {
       image: ecs.ContainerImage.fromDockerImageAsset(image),
       logging: ecs.LogDriver.awsLogs({ streamPrefix: 'agent-squad' }),
       portMappings: [{ containerPort: 8000 }],
-      command: ['npm', 'run', 'dev', '--prefix', 'backend/agent-squad'],
+      command: ['backend/scripts/start-agent-squad.sh'],
       environment: { DATABASE_URL: dbUrl },
       secrets: {
         OPENAI_API_KEY: ecs.Secret.fromSecretsManager(openaiApiKey),
